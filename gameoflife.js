@@ -10,14 +10,15 @@
         let gameDiv = document.querySelector("#gameAreah");
         let dispGameButton = document.querySelector("#dispNewGeneration");
         let calcGenButton = document.querySelector("#calcNewGeneration");
+        let promiseButton = document.querySelector("#promiseButton");
 
         // setting up the game board
 
-        let widthNoCells = 200;
-        let heightNoCells = 200;
+        let widthNoCells =250;
+        let heightNoCells = 250;
 
-        let cellWidth = 3;
-        let cellHeight = 3;
+        let cellWidth = 2;
+        let cellHeight = 2;
 
         gameCanvas.width = widthNoCells * cellWidth;
         gameCanvas.height = heightNoCells * cellHeight;
@@ -25,6 +26,17 @@
 
 
         let currentGeneration = randomGame();
+
+        tick(); //call main loop
+
+        //functions
+        function tick() {
+            fillGame(currentGeneration);
+            currentGeneration = calcNextGeneration(currentGeneration);
+            requestAnimationFrame(tick);
+        }
+
+      
 
 
 
@@ -35,13 +47,15 @@
         calcGenButton.addEventListener("click", function(){
             currentGeneration = calcNextGeneration(currentGeneration);
         });
+
+
         
         function randomGame(){
             result = []
             for(let i = 0; i < heightNoCells; i++){
                 result.push([]);
                 for(let j = 0; j < widthNoCells; j++){
-                    result[i].push(Math.random() > 0.6);
+                    result[i].push(Math.random() > 0.4);
                 }
             }
             return result;
@@ -80,6 +94,7 @@
             let jMax = widthNoCells-1;
 
             let neighbourCount = 0;
+
 
             // next generation
             let result = []
@@ -201,29 +216,25 @@
 
 
         function fillGame(cellMat){
+            gameContext.fillStyle = "black";
+            gameContext.clearRect(0,0,widthNoCells*cellWidth,heightNoCells*cellHeight);
             // i/j used same as in a mnMatrix mRows/nColumns
             // i for row
             // j for column
             for(let i = 0; i < heightNoCells; i++){
                 for(let j = 0; j < widthNoCells; j++){
-                    gameContext.fillStyle = cellMat[i][j] ? "black" : "white";
+                    //gameContext.fillStyle = cellMat[i][j] ? "black" : "white";
                     // note that fillRect follows ~Cartesian(x,y)
                     // where (0,0) upper left
                     // and (max,max) lower right
-                    gameContext.fillRect(j*cellWidth,i*cellHeight,cellWidth,cellHeight);
+                    if(cellMat[i][j]){
+                        gameContext.fillRect(j*cellWidth,i*cellHeight,cellWidth,cellHeight);
+                    }
+                    
                 }
             }
+            // gameContext.fill();
         }
-
-
-
-
-
-
-
-
-
-
 
     };
 })();
